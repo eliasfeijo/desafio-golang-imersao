@@ -1,11 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/eliasfeijo/desafio-imersao/controller"
 	"github.com/eliasfeijo/desafio-imersao/database"
 	"github.com/gorilla/mux"
 )
@@ -25,9 +25,8 @@ func main() {
 	}
 
 	router := mux.NewRouter()
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode("Hello World")
-	})
+	router.HandleFunc("/bank-accounts", controller.CreateBankAccount).Methods("POST")
+	router.HandleFunc("/bank-accounts/transfer", controller.CreateTransfer).Methods("POST")
 
 	log.Println("API is running")
 	http.ListenAndServe(":4000", router)
