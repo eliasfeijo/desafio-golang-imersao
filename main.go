@@ -26,7 +26,7 @@ func main() {
 
 	router := mux.NewRouter()
 	routes.SetupRoutesBankAccounts(router)
-	// router.HandleFunc("/bank-accounts/transfer", controller.CreateTransfer).Methods("POST")
+	routes.SetupRoutesTransfers(router)
 
 	log.Println("API is running")
 	http.ListenAndServe(":4000", router)
