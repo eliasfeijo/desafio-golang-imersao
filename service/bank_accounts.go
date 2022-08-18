@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/eliasfeijo/desafio-imersao/model"
-	"github.com/eliasfeijo/desafio-imersao/repository"
+	"github.com/eliasfeijo/desafio-golang-imersao/model"
+	"github.com/eliasfeijo/desafio-golang-imersao/repository"
 )
 
 type BankAccounts interface {

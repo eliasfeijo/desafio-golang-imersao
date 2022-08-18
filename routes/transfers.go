@@ -1,9 +1,9 @@
 package routes
 
 import (
-	"github.com/eliasfeijo/desafio-imersao/controller"
-	"github.com/eliasfeijo/desafio-imersao/repository"
-	"github.com/eliasfeijo/desafio-imersao/service"
+	"github.com/eliasfeijo/desafio-golang-imersao/controller"
+	"github.com/eliasfeijo/desafio-golang-imersao/repository"
+	"github.com/eliasfeijo/desafio-golang-imersao/service"
 	"github.com/gorilla/mux"
 )
 

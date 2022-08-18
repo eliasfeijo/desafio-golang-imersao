@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/eliasfeijo/desafio-imersao/service"
+	"github.com/eliasfeijo/desafio-golang-imersao/service"
 )
 
 type BankAccounts interface {

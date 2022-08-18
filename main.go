@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/eliasfeijo/desafio-imersao/database"
-	"github.com/eliasfeijo/desafio-imersao/routes"
+	"github.com/eliasfeijo/desafio-golang-imersao/database"
+	"github.com/eliasfeijo/desafio-golang-imersao/routes"
 	"github.com/gorilla/mux"
 )
 

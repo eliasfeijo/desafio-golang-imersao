@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/eliasfeijo/desafio-imersao/repository"
+	"github.com/eliasfeijo/desafio-golang-imersao/repository"
 )
 
 type Transfers interface {

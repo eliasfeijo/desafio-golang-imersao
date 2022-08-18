@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/eliasfeijo/desafio-imersao/database"
+	"github.com/eliasfeijo/desafio-golang-imersao/database"
 )
 
 type TransfersRepository interface {

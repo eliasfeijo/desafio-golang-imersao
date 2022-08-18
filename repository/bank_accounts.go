@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/eliasfeijo/desafio-imersao/database"
-	"github.com/eliasfeijo/desafio-imersao/model"
+	"github.com/eliasfeijo/desafio-golang-imersao/database"
+	"github.com/eliasfeijo/desafio-golang-imersao/model"
 )
 
 type BankAccountsRepository interface {

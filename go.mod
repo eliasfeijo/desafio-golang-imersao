@@ -1,4 +1,4 @@
-module github.com/eliasfeijo/desafio-imersao
+module github.com/eliasfeijo/desafio-golang-imersao
 
 go 1.19
 
