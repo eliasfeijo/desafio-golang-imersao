@@ -11,6 +11,7 @@ import (
 type BankAccountsRepository interface {
 	CreateBankAccount(number string) (int64, error)
 	FindBankAccountById(id int64) (*model.BankAccount, error)
+	FindBankAccountByNumber(number string) (*model.BankAccount, error)
 }
 
 type bankAccountsRepository struct {
@@ -60,6 +61,24 @@ func (repository *bankAccountsRepository) FindBankAccountById(id int64) (*model.
 
 	bankAccount := model.BankAccount{}
 	err = stmt.QueryRow(id).Scan(&bankAccount.ID, &bankAccount.Number, &bankAccount.CreatedAt)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	return &bankAccount, nil
+}
+
+func (repository *bankAccountsRepository) FindBankAccountByNumber(number string) (*model.BankAccount, error) {
+	stmt, err := repository.db.Prepare("SELECT id, number, created_at FROM bank_accounts WHERE number = ?")
+	if err != nil {
+		log.Fatalf("Error preparing select query: %v", err)
+		return nil, err
+	}
+	defer stmt.Close()
+
+	bankAccount := model.BankAccount{}
+	err = stmt.QueryRow(number).Scan(&bankAccount.ID, &bankAccount.Number, &bankAccount.CreatedAt)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
