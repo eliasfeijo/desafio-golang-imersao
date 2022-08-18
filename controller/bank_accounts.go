@@ -35,7 +35,18 @@ func (b bankAccounts) CreateBankAccount(w http.ResponseWriter, req *http.Request
 	w.Header().Add("Content-Type", "application/json")
 
 	var payload CreateBankAccountPayload
-	json.Unmarshal(body, &payload)
+	err = json.Unmarshal(body, &payload)
+	if err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(err.Error())
+		return
+	}
+
+	if payload.Number == "" {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode("'account_number' param is required")
+		return
+	}
 
 	bankAccount, err := b.service.CreateBankAccount(payload.Number)
 	if err != nil {

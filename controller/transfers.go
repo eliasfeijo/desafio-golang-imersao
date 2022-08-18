@@ -40,7 +40,30 @@ func (t transfers) CreateTransfer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var payload CreateTransferPayload
-	json.Unmarshal(body, &payload)
+	err = json.Unmarshal(body, &payload)
+	if err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(err.Error())
+		return
+	}
+
+	if payload.From == "" || payload.To == "" {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode("'from' and 'to' params are required")
+		return
+	}
+
+	if payload.From == payload.To {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode("'from' must be different than 'to'")
+		return
+	}
+
+	if payload.Amount <= 0 {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode("'amount' must be greater than 0")
+		return
+	}
 
 	balanceFrom, balanceTo, err := t.service.CreateTransfer(payload.From, payload.To, payload.Amount)
 	if err != nil {
