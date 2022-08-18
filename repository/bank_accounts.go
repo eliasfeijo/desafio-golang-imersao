@@ -17,15 +17,15 @@ type bankAccountsRepository struct {
 	db *sql.DB
 }
 
-var instance BankAccountsRepository
+var instanceBankAccounts BankAccountsRepository
 
 func NewBankAccounts() BankAccountsRepository {
-	if instance == nil {
+	if instanceBankAccounts == nil {
 		db := database.GetConn()
 		i := &bankAccountsRepository{db: db}
-		instance = i
+		instanceBankAccounts = i
 	}
-	return instance
+	return instanceBankAccounts
 }
 
 func (repository *bankAccountsRepository) CreateBankAccount(number string) (int64, error) {
