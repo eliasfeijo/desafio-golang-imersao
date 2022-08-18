@@ -8,6 +8,7 @@ import (
 	"github.com/eliasfeijo/desafio-imersao/controller"
 	"github.com/eliasfeijo/desafio-imersao/database"
 	"github.com/eliasfeijo/desafio-imersao/repository"
+	"github.com/eliasfeijo/desafio-imersao/service"
 	"github.com/gorilla/mux"
 )
 
@@ -26,7 +27,8 @@ func main() {
 	}
 
 	repository := repository.NewBankAccounts()
-	controller := controller.NewBankAccounts(repository)
+	service := service.NewBankAccounts(repository)
+	controller := controller.NewBankAccounts(service)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/bank-accounts", controller.CreateBankAccount).Methods("POST")

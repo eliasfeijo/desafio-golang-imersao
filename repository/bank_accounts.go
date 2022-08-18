@@ -9,7 +9,8 @@ import (
 )
 
 type BankAccountsRepository interface {
-	CreateBankAccount(number string) (*model.BankAccount, error)
+	CreateBankAccount(number string) (int64, error)
+	FindBankAccountById(id int64) (*model.BankAccount, error)
 }
 
 type bankAccountsRepository struct {
@@ -27,22 +28,30 @@ func NewBankAccounts() BankAccountsRepository {
 	return instance
 }
 
-func (repository *bankAccountsRepository) CreateBankAccount(number string) (*model.BankAccount, error) {
+func (repository *bankAccountsRepository) CreateBankAccount(number string) (int64, error) {
 	stmt, err := repository.db.Prepare("INSERT INTO bank_accounts (number) VALUES (?)")
 	if err != nil {
 		log.Fatalf("Error preparing insert query: %v", err)
-		return nil, err
+		return 0, err
 	}
 	defer stmt.Close()
 
 	result, err := stmt.Exec(number)
 	if err != nil {
 		log.Fatal(err)
-		return nil, err
+		return 0, err
 	}
 
-	id, _ := result.LastInsertId()
-	stmt, err = repository.db.Prepare("SELECT id, number, created_at FROM bank_accounts WHERE id = ?")
+	id, err := result.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+		return 0, err
+	}
+	return id, nil
+}
+
+func (repository *bankAccountsRepository) FindBankAccountById(id int64) (*model.BankAccount, error) {
+	stmt, err := repository.db.Prepare("SELECT id, number, created_at FROM bank_accounts WHERE id = ?")
 	if err != nil {
 		log.Fatalf("Error preparing select query: %v", err)
 		return nil, err
