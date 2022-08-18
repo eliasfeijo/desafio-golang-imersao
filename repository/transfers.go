@@ -5,12 +5,11 @@ import (
 	"log"
 
 	"github.com/eliasfeijo/desafio-imersao/database"
-	"github.com/eliasfeijo/desafio-imersao/model"
 )
 
 type TransfersRepository interface {
-	CreateTransfer(from int64, to int64, amount float64) (int64, error)
-	FindTransferById(id int64) (*model.Transfer, error)
+	CreateTransfer(from int64, to int64, amount float64) error
+	Balance(bankAccountId int64) (float64, error)
 }
 
 type transfersRepository struct {
@@ -28,42 +27,56 @@ func NewTransfers() TransfersRepository {
 	return instanceTransfers
 }
 
-func (repository *transfersRepository) CreateTransfer(fromId int64, toId int64, amount float64) (int64, error) {
+func (repository *transfersRepository) CreateTransfer(fromId int64, toId int64, amount float64) error {
 	stmt, err := repository.db.Prepare("INSERT INTO transfers (from_id, to_id, amount) VALUES (?, ?, ?)")
 	if err != nil {
 		log.Fatalf("Error preparing insert query: %v", err)
-		return 0, err
+		return err
 	}
 	defer stmt.Close()
 
 	result, err := stmt.Exec(fromId, toId, amount)
 	if err != nil {
 		log.Fatal(err)
-		return 0, err
+		return err
 	}
 
-	id, err := result.LastInsertId()
+	_, err = result.LastInsertId()
 	if err != nil {
 		log.Fatal(err)
-		return 0, err
+		return err
 	}
-	return id, nil
+	return nil
 }
 
-func (repository *transfersRepository) FindTransferById(id int64) (*model.Transfer, error) {
-	stmt, err := repository.db.Prepare("SELECT id, from_id, to_id, amount, created_at FROM transfers WHERE id = ?")
+func (repository *transfersRepository) Balance(bankAccountId int64) (float64, error) {
+	stmt, err := repository.db.Prepare("SELECT SUM(amount) FROM transfers WHERE from_id = ?")
 	if err != nil {
 		log.Fatalf("Error preparing select query: %v", err)
-		return nil, err
+		return 0, err
 	}
 	defer stmt.Close()
 
-	transfer := model.Transfer{}
-	err = stmt.QueryRow(id).Scan(&transfer.ID, &transfer.FromId, &transfer.ToId, &transfer.Amount, &transfer.CreatedAt)
+	var paidAmount float64
+	err = stmt.QueryRow(bankAccountId).Scan(&paidAmount)
 	if err != nil {
-		log.Fatal(err)
-		return nil, err
+		paidAmount = 0
 	}
 
-	return &transfer, nil
+	stmt, err = repository.db.Prepare("SELECT SUM(amount) FROM transfers WHERE to_id = ?")
+	if err != nil {
+		log.Fatalf("Error preparing select query: %v", err)
+		return 0, err
+	}
+	defer stmt.Close()
+
+	var receivedAmount float64
+	err = stmt.QueryRow(bankAccountId).Scan(&receivedAmount)
+	if err != nil {
+		receivedAmount = 0
+	}
+
+	balance := receivedAmount - paidAmount
+
+	return balance, nil
 }

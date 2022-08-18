@@ -27,6 +27,11 @@ type CreateTransferPayload struct {
 	Amount float64 `json:"amount"`
 }
 
+type CreateTransferResponse struct {
+	BalanceFrom float64 `json:"balance_from"`
+	BalanceTo   float64 `json:"balance_to"`
+}
+
 func (t transfers) CreateTransfer(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	body, err := io.ReadAll(r.Body)
@@ -37,14 +42,16 @@ func (t transfers) CreateTransfer(w http.ResponseWriter, r *http.Request) {
 	var payload CreateTransferPayload
 	json.Unmarshal(body, &payload)
 
-	transfer, err := t.service.CreateTransfer(payload.From, payload.To, payload.Amount)
+	balanceFrom, balanceTo, err := t.service.CreateTransfer(payload.From, payload.To, payload.Amount)
 	if err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode("Error creating Transfer")
+		json.NewEncoder(w).Encode(err.Error())
 		return
 	}
 
+	response := CreateTransferResponse{BalanceFrom: balanceFrom, BalanceTo: balanceTo}
+
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(transfer)
+	json.NewEncoder(w).Encode(response)
 }
