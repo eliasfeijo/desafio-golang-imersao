@@ -6,23 +6,36 @@ import (
 )
 
 type Transfers interface {
-	CreateTransfer(fromId int64, toId int64, amount float64) (*model.Transfer, error)
+	CreateTransfer(accountNumberFrom string, accountNumberTo string, amount float64) (*model.Transfer, error)
 }
 
 type transfers struct {
-	repository repository.TransfersRepository
+	transfersRepository    repository.TransfersRepository
+	bankAccountsRepository repository.BankAccountsRepository
 }
 
-func NewTransfers(repository repository.TransfersRepository) Transfers {
-	return &transfers{repository: repository}
+func NewTransfers(transfersRepository repository.TransfersRepository, bankAccountsRepository repository.BankAccountsRepository) Transfers {
+	return &transfers{transfersRepository: transfersRepository, bankAccountsRepository: bankAccountsRepository}
 }
 
-func (t transfers) CreateTransfer(fromId int64, toId int64, amount float64) (*model.Transfer, error) {
-	id, err := t.repository.CreateTransfer(fromId, toId, amount)
+func (t transfers) CreateTransfer(accountNumberFrom string, accountNumberTo string, amount float64) (*model.Transfer, error) {
+
+	from, err := t.bankAccountsRepository.FindBankAccountByNumber(accountNumberFrom)
 	if err != nil {
 		return nil, err
 	}
-	transfer, err := t.repository.FindTransferById(id)
+
+	to, err := t.bankAccountsRepository.FindBankAccountByNumber(accountNumberTo)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := t.transfersRepository.CreateTransfer(from.ID, to.ID, amount)
+	if err != nil {
+		return nil, err
+	}
+
+	transfer, err := t.transfersRepository.FindTransferById(id)
 	if err != nil {
 		return nil, err
 	}
