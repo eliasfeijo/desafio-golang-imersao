@@ -9,7 +9,7 @@ import (
 
 var db *sql.DB
 
-func getConn() *sql.DB {
+func GetConn() *sql.DB {
 	return db
 }
 

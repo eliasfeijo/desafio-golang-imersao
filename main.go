@@ -7,6 +7,7 @@ import (
 
 	"github.com/eliasfeijo/desafio-imersao/controller"
 	"github.com/eliasfeijo/desafio-imersao/database"
+	"github.com/eliasfeijo/desafio-imersao/repository"
 	"github.com/gorilla/mux"
 )
 
@@ -24,9 +25,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	repository := repository.NewBankAccounts()
+	controller := controller.NewBankAccounts(repository)
+
 	router := mux.NewRouter()
 	router.HandleFunc("/bank-accounts", controller.CreateBankAccount).Methods("POST")
-	router.HandleFunc("/bank-accounts/transfer", controller.CreateTransfer).Methods("POST")
+	// router.HandleFunc("/bank-accounts/transfer", controller.CreateTransfer).Methods("POST")
 
 	log.Println("API is running")
 	http.ListenAndServe(":4000", router)
