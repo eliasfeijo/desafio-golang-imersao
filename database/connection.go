@@ -14,10 +14,12 @@ func getConn() *sql.DB {
 }
 
 func ConnectDatabase() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "./sqlite.db")
+	dbConn, err := sql.Open("sqlite3", "./sqlite.db")
 	if err != nil {
 		return nil, err
 	}
+
+	db = dbConn
 
 	return db, nil
 }
