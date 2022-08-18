@@ -18,10 +18,15 @@ func main() {
 	}
 	defer db.Close()
 
-	err = database.Migrate()
-	if err != nil {
-		log.Fatalf("Error migrating database: %v", err)
-		os.Exit(1)
+	cmd := os.Getenv("CMD")
+	if cmd == "migrate" {
+		err = database.Migrate()
+		if err != nil {
+			log.Fatalf("Error migrating database: %v", err)
+			os.Exit(1)
+		}
+		log.Println("Database migrated successfully!")
+		os.Exit(0)
 	}
 
 	router := mux.NewRouter()
@@ -29,5 +34,5 @@ func main() {
 	routes.SetupRoutesTransfers(router)
 
 	log.Println("API is running")
-	http.ListenAndServe(":4000", router)
+	http.ListenAndServe(":8000", router)
 }
