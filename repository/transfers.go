@@ -59,7 +59,7 @@ func (repository *transfersRepository) FindTransferById(id int64) (*model.Transf
 	defer stmt.Close()
 
 	transfer := model.Transfer{}
-	err = stmt.QueryRow(id).Scan(&transfer.ID, &transfer.FromId, &transfer.ToId, &transfer.CreatedAt)
+	err = stmt.QueryRow(id).Scan(&transfer.ID, &transfer.FromId, &transfer.ToId, &transfer.Amount, &transfer.CreatedAt)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
